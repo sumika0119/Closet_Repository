@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3>服編集画面</h3>
+    <form method="POST"  enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ edit_clothe_form.as_p }}
+        <input type="submit" value="更新"></input>
+    </form>
+     <form id="delete-form" method="POST" action="{% url 'boards:delete_clothe' pk=edit_clothe_form.instance.pk %}">
+        {% csrf_token %}
+        <input type="submit" value="削除する" onclick="return confirm('本当に削除しますか？')"></input>
+    </form>
+{% endblock %}
+

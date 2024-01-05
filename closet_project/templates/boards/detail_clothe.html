@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="detail-container">
+  <div class="detail-left">
+    <h3>服詳細画面</h3>
+    <p>タイトル: {{ clothe.title }}</p>
+    {% if clothe.picture %}
+        <p>画像: <img src="{{ clothe.picture.url }}" alt="{{ clothe.title }}"></p>
+    {% else %}
+        <p>画像: </p>
+    {% endif %}
+  </div>
+  <div class="detail-right">
+    <p></p>
+    <p>価格: {{ clothe.price|default_if_none:"" }}円</p>
+    <p>購入日: {{ clothe.purchase_date|date:"Y年m月d日"|default_if_none:"" }}</p>
+    <p>カテゴリー: {{ clothe.category }}</p>
+    <p>カラー:
+        {% for color in clothe.color.all %}
+            {{ color.color_name }}
+            {% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>    
+    <p>購入したお店: {{ clothe.store }}</p>
+    <div class="button-container">
+    <a href="{% url 'boards:delete_clothe' pk=clothe.pk %}"><button>削除</button></a>
+    <a href="{% url 'boards:edit_clothe' pk=clothe.pk %}"><button>編集</button></a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

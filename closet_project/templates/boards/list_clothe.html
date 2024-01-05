@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+{% if messages %}
+  {% for message in messages %}
+  <div>{{ message.message }}</div>
+  {% endfor %}
+{% endif %}
+<h3>服一覧画面</h3>    
+<p><a class="navbar-brand" href="{% url 'boards:create_clothe' %}">服を新たに登録する</a></p>
+<form id="sortForm" method="GET">
+    <label for="sort">並べ替え：</label>
+    <select name="sort" id="sort">
+      <option value="">並べ替え方法を選択してください</option>
+      <option value="price_low">価格が安い順</option>
+      <option value="price_high">価格が高い順</option>
+      <option value="date_new">購入日が新しい順</option>
+      <option value="date_old">購入日が古い順</option>
+    </select>
+    <input type="submit" value="並び替え">
+</form>  
+<form id="filterForm" method="GET">
+    <label for="color">色：</label>
+    <select name="color" id="color">
+        <option value="">全ての色</option>
+        {% for c in color %}
+            <option value="{{ c.color_name }}" {% if c.color_name == selected_color %}selected{% endif %}>{{ c.color_name }}</option>
+        {% endfor %}
+    </select>
+    <label for="category">カテゴリー：</label>
+    <select name="category" id="category">
+        <option value="">全てのカテゴリー</option>
+        {% for cat in category %}
+            <option value="{{ cat.category_name }}" {% if cat.category_name == selected_category %}selected{% endif %}>{{ cat.category_name }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="絞り込み">
+</form>
+<form id="searchForm" method="GET">
+    <label for="search">検索：</label>
+    <input type="text" name="search" id="search" placeholder="キーワードを入力してください">
+    <input type="submit" value="検索">
+</form>
+   <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>タイトル</th>
+        <th>写真</th>
+        <th>価格</th>
+        <th>購入日</th>
+        <th>カテゴリー</th>
+        <th>カラー</th>
+        <th>購入店</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for clothe in clothe %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td><a href="{% url 'boards:detail_clothe' pk=clothe.pk %}">{{ clothe.title }}</a></td>
+        <td>
+          {% if clothe.picture %}
+          <img src="{{ clothe.picture.url }}" alt="{{ clothe.title }}" width="100">
+          {% endif %}
+        </td>
+        <td>{{ clothe.price|default_if_none:"" }}円</td>
+        <td>{{ clothe.purchase_date|default_if_none:"" }}</td>
+        <td>{{ clothe.category.category_name }}</td>
+        <td>
+          {% for color in clothe.color.all %}
+            {{ color.color_name }}
+            {% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </td>
+        <td>{{ clothe.store }}</td>
+      </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

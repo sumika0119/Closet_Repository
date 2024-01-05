@@ -22,9 +22,16 @@ class RegistForm(forms.ModelForm):
         
     def save(self, commit=False):
         user = super().save(commit=False)
-        validate_password(self.cleaned_data['password'], user)
-        user.set_password(self.cleaned_data['password'])
-        user.save()
+        password = self.cleaned_data['password']
+        
+        try:
+            validate_password(password, user)
+        except forms.ValidationError as error:
+            self.add_error('password', error)
+        
+        user.set_password(password)
+        if commit:
+            user.save()
         return user
     
 class LoginForm(forms.Form):
@@ -39,14 +46,10 @@ class UserEditForm(forms.ModelForm):
         model = Users
         fields = ('username', 'email')
         
-class PasswordChangeForm(forms.ModelForm):
+class PasswordChangeForm(forms.Form):
     
     password = forms.CharField(label='パスワード', widget=forms.PasswordInput())
     confirm_password = forms.CharField(label='パスワード再入力', widget=forms.PasswordInput())
-
-    class Meta():
-        model = Users
-        fields = ('password',)
         
     def clean(self):
         cleaned_data = super().clean()
@@ -54,3 +57,10 @@ class PasswordChangeForm(forms.ModelForm):
         confirm_password = cleaned_data['confirm_password']
         if password !=confirm_password:
             raise forms.ValidationError('パスワードが異なります')
+        
+    def save(self, user, commit=True):
+        password = self.cleaned_data["password"]
+        user.set_password(password)  # パスワードのハッシュ化
+        if commit:
+            user.save()
+        return user

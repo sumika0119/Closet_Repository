@@ -1,15 +1,19 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="ja">
   <head>
     <meta charset="utf-8">
-    <!-- bootstrap-->
+    <title>my closet</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href= "{% static 'css/style.css' %}">
+    {% comment %} <meta name="viewport" content="width=device-width, initial-scale=1.0"> {% endcomment %}
   </head>
-  <body>
+  <body class="home-page">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="{% url 'accounts:home' %}">ホーム</a>
+      <a class="navbar-brand" href="{% url 'accounts:home' %}">HOME</a>
       {% if user.is_authenticated %}
-      <a class="navbar-brand" href="{% url 'boards:create_clothe' %}">服登録</a>
+      <a class="navbar-brand" href="{% url 'boards:create_clothe' %}">服登録</a>          
+      <a class="navbar-brand" href="{% url 'boards:list_clothe' %}">服一覧</a>
       <a class="navbar-brand" href="{% url 'accounts:user_logout' %}">ログアウト</a>
       <a class="navbar-brand" href="{% url 'accounts:user_edit' %}">ユーザ更新情報</a>
       {% else %}
@@ -18,6 +22,6 @@
       {% endif %}
     </nav>
   {% block content %}{% endblock %}
-
+  
   </body>
 </html>

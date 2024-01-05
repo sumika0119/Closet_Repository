@@ -17,37 +17,25 @@ class Categories(models.Model):
     ACCESSORY = 'accessory'
     BAG = 'bag'
     
-    CATEGORY_CHOICES = [
-        (BLOUSE, 'ブラウス'),
-        (SHIRT, 'シャツ'),
-        (SWEAT, 'スウェット'),
-        (KNIT, 'ニット'),
-        (PANTS, 'パンツ'),
-        (SKIRT, 'スカート'),
-        (JACKET, 'ジャケット'),
-        (CARDIGAN, 'カーディガン'),
-        (COAT, 'コート'),
-        (DRESS, 'ドレス'),
-        (SHOES, 'シューズ'),
-        (ACCESSORY, 'アクセサリー'),
-        (BAG, 'バッグ'),
-    ]
-    
-    category_name = models.CharField(max_length=255, choices=CATEGORY_CHOICES)
+    category_name = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
         db_table = 'categories'
         
-class Stores(models.Model):
+    def __str__(self):
+        return self.category_name
+        
+        
+# class Stores(models.Model):
    
-    store_name = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+#     store_name = models.CharField(max_length=100)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
     
-    class Meta:
-        db_table = 'stores'
+#     class Meta:
+#         db_table = 'stores'
 
 class Colors(models.Model):
     
@@ -61,19 +49,7 @@ class Colors(models.Model):
     BLACK = 'black'    
     WHITE = 'white'
         
-    COLOR_CHOICES = [
-        (PINK, 'ピンク'),
-        (RED, '赤'),
-        (ORANGE, 'オレンジ'),
-        (BROWN, '茶色'),
-        (YELLOW, '黄色'),
-        (BLUE, '青'),
-        (GREEN, '緑'),
-        (BLACK, '黒'),
-        (WHITE, '白'),
-    ]
-
-    color_name = models.CharField(max_length=255, choices=COLOR_CHOICES)
+    color_name = models.CharField(max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -83,27 +59,43 @@ class Colors(models.Model):
     class Meta:
         db_table = 'colors'
     
+class ClothesManager(models.Manager):
+    
+    def fetch_all_clothe(self):
+        return self.order_by('id').all()
+
+
 class Clothes(models.Model):
     
     title = models.CharField(max_length=255)
-    picture = models.ImageField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    purchase_data = models.DateTimeField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    picture = models.FileField(null=True,blank=True)
+    price = models.IntegerField(default=0, null=True, blank=True)
+    purchase_date = models.DateTimeField(null=True,blank=True)
     user = models.ForeignKey(
         'accounts.Users', on_delete=models.CASCADE
     )
     category = models.ForeignKey(
         'Categories', on_delete=models.CASCADE
     )
-    color = models.ManyToManyField(Colors)
-    store = models.ForeignKey(
-        'Stores', on_delete=models.CASCADE
+    color = models.ManyToManyField(
+        Colors, through='Clothe_Colors', related_name='clothe'
     )
+    store = models.CharField(max_length=255, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
-    def __str_(self):
-        return self.title
+    objects = ClothesManager()
     
     class Meta:
         db_table = 'clothes'
+        
+    def __str__(self):
+        return self.title
+    
+class Clothe_Colors(models.Model):
+    clothe = models.ForeignKey(
+        Clothes, on_delete=models.CASCADE, related_name='clothe_relation',
+    )
+    color = models.ForeignKey(
+        Colors, on_delete=models.CASCADE, related_name='color_relation',
+    )

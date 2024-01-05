@@ -1,0 +1,62 @@
+  .detail-container h3 {
+    font-size: 30px; /* 例として大きめのサイズを指定 */
+  }
+  
+  .detail-container img {
+    width: 500px; /* 例として大きめのサイズを指定 */
+  }
+  
+  /* 価格、購入日、カテゴリー、カラー、購入したお店の文字サイズを大きくする */
+  .detail-container p {
+    font-size: 25px; /* 例として大きめのサイズを指定 */
+  }
+
+  body {
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .detail-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .detail-left,
+  .detail-right {
+    width: 45%; /* または適切な幅に調整 */
+  }
+  
+  .button-container {
+    text-align: right; /* ボタンを右寄せにするためのスタイル */
+    margin-top: 20px; /* 上側にマージンを追加 */
+    display: flex;
+    justify-content: flex-start; /* 左側に寄せる */
+  }
+
+  .button-container a {
+    margin-left: 10px; /* ボタン間のスペースを設定 */
+  }
+
+  .button-container button {
+    padding: 10px 20px; /* 上下左右の余白 */
+    font-size: 20px; /* フォントサイズ */
+  }
+
+  .custom-paragraph {
+    font-family: 'Arial', sans-serif; /* フォントの種類 */
+    font-size: 24px; /* フォントのサイズ */
+    background-color: #ffe6e6; /* 薄いピンク色 */
+    text-align: center;
+    padding: 20px; /* 上下左右に余白を追加 */
+    line-height: 1.5; 
+  }
+
+  .custom-image {
+    width: 600px; /* 幅を指定 */
+    height: 380%; /* 高さを指定 */
+  }
+
+  .image-container {
+    display: flex;
+    justify-content: center;
+  }

@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
+from django.http import HttpResponse
 
 def home(request):
     return render(
@@ -28,9 +29,10 @@ def regist(request):
     
 def activate_user(request, token):
     user_activate_token = UserActivateTokens.objects.activate_user_by_token(token)
-    return render(
-        request, 'accounts/activate_user.html'
-    )
+    if user_activate_token:
+        return HttpResponse("ユーザーをアクティブ化しました。")
+    else:
+        return HttpResponse("トークンが無効です。")
     
 def user_login(request):
     login_form = forms.LoginForm(request.POST or None)
@@ -73,14 +75,24 @@ def user_edit(request):
     
 @login_required
 def change_password(request):
-    password_change_form = forms.PasswordChangeForm(request.POST or None, instance=request.user)
-    if password_change_form.is_valid():
-        try:
-            password_change_form.save()
-            messages.success(request, 'パスワード更新完了しました。')
-            update_session_auth_hash(request, request.user)
-        except ValidationError as e:
-            password_change_form.add_error('password', e)
+    if request.method == 'POST':
+        password_change_form = forms.PasswordChangeForm(data=request.POST)
+        if password_change_form.is_valid():
+            password = password_change_form.cleaned_data['password']
+            confirm_password = password_change_form.cleaned_data['confirm_password']
+
+            if password != confirm_password:
+                messages.error(request, 'パスワードが一致しません。')
+            else:
+                user = request.user
+                user.set_password(password)
+                user.save()
+                messages.success(request, 'パスワードを更新しました。')
+                update_session_auth_hash(request, user)
+                return redirect('accounts:home')
+    else:
+        password_change_form = forms.PasswordChangeForm()
+
     return render(
         request, 'accounts/change_password.html', context={
             'password_change_form': password_change_form

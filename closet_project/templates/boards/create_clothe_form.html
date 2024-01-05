@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 <h3>服登録画面</h3>
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
 {% csrf_token %}
 {{ create_clothe_form.as_p }}
-<input type="submit" value="服登録">
+<input type="submit" value="登録"></input>
 </form>
 {% endblock %}
