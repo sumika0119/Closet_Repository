@@ -1,9 +1,12 @@
+from django.contrib import admin
 from django.urls import path
+from .views import CustomLoginView
 from . import views
 
 app_name = 'accounts'
 
 urlpatterns = [
+    path('admin/', admin.site.urls),  # admin画面のURL設定
     path('', views.home, name='home'),
     path('regist', views.regist, name='regist'),
     path('activate_user/<uuid:token>', views.activate_user, name='activate_user'),

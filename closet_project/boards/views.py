@@ -9,12 +9,15 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from PIL import Image
 import os
 
 # Create your views here.    
 
 @login_required
 def create_clothe(request):
+    categories = Categories.objects.all() 
+    colors = Colors.objects.all()
     if request.method =='POST':
         create_clothe_form = forms.CreateClotheForm(request.POST, request.FILES)
         if create_clothe_form.is_valid():
@@ -24,29 +27,38 @@ def create_clothe(request):
             purchase_date = create_clothe_form.cleaned_data['purchase_date']
             store_name = create_clothe_form.cleaned_data['store']
             category_name = create_clothe_form.cleaned_data['category']
-            selected_color = create_clothe_form.cleaned_data['color']
+            selected_colors = create_clothe_form.cleaned_data['color']
             
             category_instance = Categories.objects.filter(category_name=category_name).first()
             color_instance_list = [] 
-            for color_name in selected_color:
-                color_instance = Colors.objects.filter(color_name=color_name).first()
+            for color_id in selected_colors:
+                color_instance = color_id
                 if color_instance:
                     color_instance_list.append(color_instance)
             
             new_clothe = create_clothe_form.save(commit=False)
             new_clothe.user = request.user
-            new_clothe.save()
             
+            if 'picture' in request.FILES:
+                image = Image.open(request.FILES['picture'])
+                desired_width = 300
+                desired_height = 200
+                resized_image = image.resize((desired_width, desired_height))
+        
+
+                new_clothe.picture = request.FILES['picture']
+                           
             if category_instance:
                 new_clothe.category = category_instance
+                
+            new_clothe.save()
 
             for color_instance in color_instance_list:
                 Clothe_Colors.objects.create(clothe=new_clothe, color=color_instance)
-
-            new_clothe.save()
             
-            messages.success(request, '服を登録しました。')
-            return redirect('accounts:home')   
+            return redirect('boards:list_clothe')   
+        
+    
             
     else:
         create_clothe_form = forms.CreateClotheForm()
@@ -54,9 +66,11 @@ def create_clothe(request):
     return render(
         request, 'boards/create_clothe_form.html', context={
             'create_clothe_form': create_clothe_form,
+            'categories': categories, 
+            'colors': colors,
         }
     )
- 
+
 @login_required    
 def list_clothe(request):
     sort_option = request.GET.get('sort', '')  # URL パラメーターからソートオプションを取得
@@ -105,6 +119,7 @@ def list_clothe(request):
 @login_required
 def detail_clothe(request, pk):
     clothe = get_object_or_404(Clothes, pk=pk)
+    print(f"Color: {clothe.color.all()}")  # デバッグ用のログ出力
     return render(
         request, 'boards/detail_clothe.html', context={
             'clothe': clothe,
@@ -113,27 +128,32 @@ def detail_clothe(request, pk):
     
 @login_required
 def edit_clothe(request, pk):
+    categories = Categories.objects.all()
+    colors = Colors.objects.all()
+    
     clothe=get_object_or_404(Clothes, pk=pk)
     
     if clothe.user.pk != request.user.pk:
         raise Http404
     
     if request.method == 'POST':
+        print('POST request received')
         edit_clothe_form = forms.CreateClotheForm(request.POST or None, request.FILES or None, instance=clothe)
         if edit_clothe_form.is_valid():
             edit_clothe_form.save()
-            messages.success(request, '服の登録を更新しました')
             return redirect(
                 'boards:detail_clothe', 
                 pk=pk
             ) 
     else:
         edit_clothe_form = forms.CreateClotheForm(instance=clothe)
-    
+            
     return render(
         request, 'boards/edit_clothe.html', context={
             'edit_clothe_form':edit_clothe_form,
             'pk': pk,
+            'categories': categories,
+            'colors': colors,
         }
     )
 
@@ -152,5 +172,4 @@ def delete_clothe(request, pk):
 
   
 def delete_clothe_complete(request):
-    messages.success(request, '服を削除しました')  # 成功メッセージを設定
-    return redirect('boards:list_clothe')  # 服一覧画面にリダイレクト
+    return redirect('boards:list_clothe')  

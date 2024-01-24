@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from django.http import HttpResponse
+from django.contrib.auth.views import LoginView
 
 def home(request):
     return render(
@@ -44,10 +45,12 @@ def user_login(request):
         if user:
             if user.is_active:
                 login(request, user)
-                messages.success(request, 'ログイン完了しました')
-                return redirect('accounts:home')
+                if user.is_staff:  # ユーザーがスタッフ（管理者）である場合
+                    return redirect('admin:index')
+                else:
+                    return redirect('accounts:home')
             else:
-                messages.warning(request, 'ユーザがアクティブではありません')
+                raise ValidationError('ユーザがアクティブではありません')
         else:
             messages.warning(request, 'メールかパスワードが間違っています')
     return render(
@@ -56,18 +59,17 @@ def user_login(request):
         }
     )
     
+
     
 @login_required
 def user_logout(request):
     logout(request)
-    messages.success(request, 'ログアウトしました')
     return redirect('accounts:home')
 
 @login_required
 def user_edit(request):
     user_edit_form = forms.UserEditForm(request.POST or None, request.FILES or None, instance=request.user)
     if user_edit_form.is_valid():
-        messages.success(request, '更新完了しました。')
         user_edit_form.save()
     return render(request, 'accounts/user_edit.html', context={
         'user_edit_form': user_edit_form,
@@ -87,7 +89,6 @@ def change_password(request):
                 user = request.user
                 user.set_password(password)
                 user.save()
-                messages.success(request, 'パスワードを更新しました。')
                 update_session_auth_hash(request, user)
                 return redirect('accounts:home')
     else:
@@ -98,3 +99,11 @@ def change_password(request):
             'password_change_form': password_change_form
         }
     )
+    
+
+class CustomLoginView(LoginView):
+    template_name = 'accounts/user_login.html'  # ログイン画面のテンプレートパス
+
+    def get_success_url(self):
+        # ログイン成功後の遷移先URLを指定（管理画面のURLを指定することで、管理画面にログイン後に遷移する）
+        return '/admin/'

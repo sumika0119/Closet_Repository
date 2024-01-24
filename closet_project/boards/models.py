@@ -60,17 +60,16 @@ class Colors(models.Model):
         db_table = 'colors'
     
 class ClothesManager(models.Manager):
-    
     def fetch_all_clothe(self):
-        return self.order_by('id').all()
+        return self.all()
 
 
 class Clothes(models.Model):
     
     title = models.CharField(max_length=255)
-    picture = models.FileField(null=True,blank=True)
+    picture = models.ImageField(upload_to='closet_project/media/', null=True, blank=True)
     price = models.IntegerField(default=0, null=True, blank=True)
-    purchase_date = models.DateTimeField(null=True,blank=True)
+    purchase_date = models.DateField(null=True,blank=True)
     user = models.ForeignKey(
         'accounts.Users', on_delete=models.CASCADE
     )
@@ -78,7 +77,7 @@ class Clothes(models.Model):
         'Categories', on_delete=models.CASCADE
     )
     color = models.ManyToManyField(
-        Colors, through='Clothe_Colors', related_name='clothe'
+        Colors, blank=True, through='Clothe_Colors', related_name='clothe'
     )
     store = models.CharField(max_length=255, default='')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -94,8 +93,8 @@ class Clothes(models.Model):
     
 class Clothe_Colors(models.Model):
     clothe = models.ForeignKey(
-        Clothes, on_delete=models.CASCADE, related_name='clothe_relation',
+        Clothes, on_delete=models.CASCADE, related_name='clothe_color_relation',
     )
     color = models.ForeignKey(
-        Colors, on_delete=models.CASCADE, related_name='color_relation',
+        Colors, on_delete=models.CASCADE, related_name='color_clothe_relation',
     )

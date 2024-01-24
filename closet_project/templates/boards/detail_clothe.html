@@ -1,33 +1,82 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
+<p class="custom-paragraph">服詳細画面</p> 
 <div class="detail-container">
   <div class="detail-left">
-    <h3>服詳細画面</h3>
-    <p>タイトル: {{ clothe.title }}</p>
     {% if clothe.picture %}
-        <p>画像: <img src="{{ clothe.picture.url }}" alt="{{ clothe.title }}"></p>
+        <p><img src="{{ clothe.picture.url }}" alt="{{ clothe.title }}" class="image-custom"></p>
     {% else %}
-        <p>画像: </p>
+        <p class="no-image">画像なし</p>
     {% endif %}
   </div>
-  <div class="detail-right">
-    <p></p>
-    <p>価格: {{ clothe.price|default_if_none:"" }}円</p>
-    <p>購入日: {{ clothe.purchase_date|date:"Y年m月d日"|default_if_none:"" }}</p>
-    <p>カテゴリー: {{ clothe.category }}</p>
-    <p>カラー:
-        {% for color in clothe.color.all %}
-            {{ color.color_name }}
-            {% if not forloop.last %}, {% endif %}
+   <div class="detail-right">
+    <p class="title">{{ clothe.title }}</p>
+    
+    <div class="detail-info">
+      <div class="info-row">
+        <p class="info-label">価格:</p>
+        <p class="info-value"> {{ "￥"|default_if_none:"" }}{{ clothe.price|default_if_none:"" }}</p>
+      </div>
+      
+      <div class="info-row">
+        <p class="info-label">購入日:</p>
+        <p class="info-value"> {{ clothe.purchase_date|date:"Y年m月d日"|default_if_none:"未登録" }}</p>
+      </div>
+      
+      <div class="info-row">
+        <p class="info-label">店の名前:</p>
+        <p class="info-value"> {{ clothe.store|default_if_none:"   " }}</p>
+      </div>
+      
+      <div class="info-row">
+        <p class="info-label">カテゴリー:</p>
+        <p class="info-value"> {{ clothe.category|default_if_none:"   " }}</p>
+      </div>
+      
+      <div class="info-row">
+        <p class="info-label">カラー:</p>
+        <span class="info-value">
+        {% for color_instance in clothe.color.all %}
+            {{ color_instance.color_name }}
+            {% if not forloop.last %}、{% endif %}
         {% endfor %}
-    </p>    
-    <p>購入したお店: {{ clothe.store }}</p>
-    <div class="button-container">
-    <a href="{% url 'boards:delete_clothe' pk=clothe.pk %}"><button>削除</button></a>
-    <a href="{% url 'boards:edit_clothe' pk=clothe.pk %}"><button>編集</button></a>
+    </span>
     </div>
   </div>
+    <div class="button-container">
+      <a href="{% url 'boards:edit_clothe' pk=clothe.pk %}">
+        <button type="submit" class="btn btn-primary">編集</button>
+      </a>
+        <button type="button" class="btn btn-danger" onclick="confirmDelete()" style="margin-left: 30px;">削除</button>
+      <form id="delete-form-temp" method="POST" action="{% url 'boards:delete_clothe' pk=clothe.pk %}">
+        {% csrf_token %}
+      </form>
+    </div>
+    <script>
+    function confirmDelete() {
+      console.log('confirmDelete called');
+      var deleteForm = document.getElementById('delete-form-temp');
+      if (deleteForm) {
+        console.log('deleteForm found');
+        if (confirm('本当に削除しますか？')) {
+          console.log('Confirmed, submitting form');
+          deleteForm.submit();
+        } else {
+          console.log('Not confirmed, form not submitted');
+        }
+      } else {
+        console.log('deleteForm not found');
+      }
+    }
+  </script>
+  <script src="{% static 'js/image_preview.js' %}"></script> 
+  </div>
 </div>
+
 {% endblock %}
+
+
+
 
 

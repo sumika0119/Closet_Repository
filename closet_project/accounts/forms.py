@@ -1,5 +1,6 @@
 from django import forms
 from .models import Users
+from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 
 
@@ -35,8 +36,14 @@ class RegistForm(forms.ModelForm):
         return user
     
 class LoginForm(forms.Form):
-    email = forms.CharField(label="メールアドレス")
+    email = forms.EmailField(label="メールアドレス")
     password = forms.CharField(label="パスワード", widget=forms.PasswordInput())
+    
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not email:
+            raise ValidationError("メールアドレスを入力してください。")
+        return email
     
 class UserEditForm(forms.ModelForm):
     username = forms.CharField(label='名前')

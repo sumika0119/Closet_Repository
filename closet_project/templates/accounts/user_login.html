@@ -1,13 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-{% if messages %}
+
+<div class="text-center">
+  <form method="POST">
+   {% csrf_token %}
+   {{ login_form.as_p }}
+   {% if messages %}
   {% for message in messages %}
-    <div>{{ message.message }}</div>
+    <div style="color: red;">{{ message.message }}</div>
   {% endfor %}
 {% endif %}
-<form method="POST">
-{% csrf_token %}
-{{ login_form.as_p }}
-<input type="submit" value="ログイン">
-</form>
+   <div class="button-container">
+      <button type="submit" class="btn btn-primary">ログイン</button>
+    </div>
+  </form>
+</div>
 {% endblock %}

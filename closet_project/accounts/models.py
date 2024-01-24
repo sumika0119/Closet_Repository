@@ -77,7 +77,7 @@ class UserActivateTokens(models.Model):
     
     class Meta:
         db_table = 'user_activate_tokens'
-   
+          
    
         
 @receiver(post_save, sender=Users)
