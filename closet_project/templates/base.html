@@ -13,20 +13,48 @@
       crossorigin="anonymous"></script>
     {% comment %} <meta name="viewport" content="width=device-width, initial-scale=1.0"> {% endcomment %}
   </head>
-  <body class="home-page">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="{% url 'accounts:home' %}">HOME</a>
-      {% if user.is_authenticated %}
-      <a class="navbar-brand" href="{% url 'boards:create_clothe' %}">服登録</a>          
-      <a class="navbar-brand" href="{% url 'boards:list_clothe' %}">服一覧</a>
-      <a class="navbar-brand" href="{% url 'accounts:user_logout' %}">ログアウト</a>
-      <a class="navbar-brand" href="{% url 'accounts:user_edit' %}">ユーザ更新情報</a>
-      {% else %}
-      <a class="navbar-brand" href="{% url 'accounts:user_login' %}">ログイン</a>
-      <a class="navbar-brand" href="{% url 'accounts:regist' %}">ユーザ登録</a>
-      {% endif %}
-    </nav>
+  <style>
+  .navbar-nav .nav-link,
+  .navbar-brand {
+    font-size: 18px; /* 任意のフォントサイズ */
+  }
+</style>
+
+<body class="home-page">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto mr-3">
+      <a class="nav-link" href="{% url 'accounts:home' %}">HOME</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'boards:create_clothe' %}">服登録</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'boards:list_clothe' %}">服一覧</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:user_logout' %}">ログアウト</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:user_edit' %}">ユーザ更新情報</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:user_login' %}">ログイン</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:regist' %}">ユーザ登録</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
   {% block content %}{% endblock %}
-  
-  </body>
+</body>
 </html>
