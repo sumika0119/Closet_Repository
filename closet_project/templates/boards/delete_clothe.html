@@ -20,15 +20,15 @@
     <p>購入したお店: {{ clothe.store }}</p>
     <form id="delete-form" method="POST" action="{% url 'boards:delete_clothe' pk=clothe.pk %}">
       {% csrf_token %}
-      <!-- 削除をキャンセルして詳細ページに戻るためのリンク -->
+      
       <a href="{% url 'boards:detail_clothe' pk=clothe.pk %}">キャンセル</a>
-      <!-- はい、削除する -->
+     
       <input id="delete-button" type="submit" value="はい、削除します">
     </form>
     <script>
       document.getElementById("delete-form").addEventListener("submit", function(event) {
       event.preventDefault();
-      this.submit();  // 「はい、削除します」を選択した場合、削除処理を実行
+      this.submit();  
       });
     </script>
 {% endblock %}
