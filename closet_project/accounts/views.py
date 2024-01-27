@@ -8,6 +8,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from django.http import HttpResponse
 from django.contrib.auth.views import LoginView
+from django.urls import reverse
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import UserManager
+
+User = get_user_model()
 
 def home(request):
     return render(
@@ -15,13 +20,19 @@ def home(request):
     )
     
 def regist(request):
+    user_manager = UserManager()
     regist_form = forms.RegistForm(request.POST or None)
     if regist_form.is_valid():
         try:
-            regist_form.save()
+            user = regist_form.save()
+            # データベースへの保存が成功したことを確認するために print 文を追加
+            print(f"User {user.email} successfully registered.")
+            print("Redirecting to home...")
             return redirect('accounts:home')
         except ValidationError as e:
-            regist_form.add_error('password', e)   
+            import pdb; pdb.set_trace()
+            # regist_form.add_error('password', e) 
+            print(f"Exception during registration: {e}") 
     return render(
         request, 'accounts/regist.html', context={
             'regist_form': regist_form,
@@ -34,6 +45,8 @@ def activate_user(request, token):
         return HttpResponse("ユーザーをアクティブ化しました。")
     else:
         return HttpResponse("トークンが無効です。")
+    
+    return render(request, 'accounts/activate_user.html')
     
 def user_login(request):
     login_form = forms.LoginForm(request.POST or None)
@@ -102,8 +115,17 @@ def change_password(request):
     
 
 class CustomLoginView(LoginView):
-    template_name = 'accounts/user_login.html'  # ログイン画面のテンプレートパス
+    template_name = 'accounts/user_login.html'
 
     def get_success_url(self):
-        # ログイン成功後の遷移先URLを指定（管理画面のURLを指定することで、管理画面にログイン後に遷移する）
-        return '/admin/'
+        user = self.request.user
+
+        if user.is_staff:
+            # 管理者ユーザーの場合は管理者サイトへ遷移
+            return reverse('admin:index')
+        elif user.is_active:
+            # activeなユーザーの場合はHOME画面へ遷移
+            return reverse('accounts:home')
+        else:
+            # 上記の条件に合致しない場合、デフォルトの遷移先になります
+            return super().get_success_url()

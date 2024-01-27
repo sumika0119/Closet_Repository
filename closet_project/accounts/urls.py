@@ -6,8 +6,8 @@ from . import views
 app_name = 'accounts'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),  # admin画面のURL設定
     path('', views.home, name='home'),
+    path('admin/', admin.site.urls),  # admin画面のURL設定
     path('regist', views.regist, name='regist'),
     path('activate_user/<uuid:token>', views.activate_user, name='activate_user'),
     path('user_login', views.user_login, name='user_login'),

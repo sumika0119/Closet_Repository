@@ -1,5 +1,5 @@
 from django import forms
-from .models import Users
+from .models import Users, UserManager
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 
@@ -13,6 +13,10 @@ class RegistForm(forms.ModelForm):
     class Meta():
         model = Users
         fields = ('username', 'email', 'password')
+        
+    def __init__(self, user_manager, *args, **kwargs):
+        self.user_manager = user_manager
+        super().__init__(*args, **kwargs)
         
     def clean(self):
         cleaned_data = super().clean()
@@ -29,8 +33,19 @@ class RegistForm(forms.ModelForm):
             validate_password(password, user)
         except forms.ValidationError as error:
             self.add_error('password', error)
+            
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Password validation error: {error}")
         
-        user.set_password(password)
+        user_manager = UserManager()
+        
+        user = user_manager.create_user(
+            username=self.cleaned_data['username'],
+            email=self.cleaned_data['email'],
+            password=password
+        )
+    
         if commit:
             user.save()
         return user

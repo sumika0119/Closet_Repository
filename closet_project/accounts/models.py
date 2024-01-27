@@ -11,8 +11,9 @@ from django.utils.timezone import timedelta
 from django.urls import reverse_lazy
 from django.contrib import admin
 
-
+        
 class UserManager(BaseUserManager):
+        
     def _create_user(self, username, email, password):
         if not email:
             raise ValueError('Enter Email')
@@ -23,6 +24,9 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
+    
+    def create_user(self, username, email, password=None, **extra_fields):
+        return self._create_user(username, email, password, **extra_fields)
 
     def create_superuser(self, username, email, password=None):
         if password is None:
@@ -34,7 +38,7 @@ class UserManager(BaseUserManager):
         user.is_superuser = True
         user.save(using=self._db)
         return user
-
+    
 class Users(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, unique=True)
@@ -51,7 +55,6 @@ class Users(AbstractBaseUser, PermissionsMixin):
     
     class Meta:
         db_table = 'users'
-        
 
 class UserActivateTokensManager(models.Manager):    
    
@@ -84,7 +87,8 @@ class UserActivateTokens(models.Model):
         
 @receiver(post_save, sender=Users)
 def publish_token(sender, instance, **kwargs):
+    print("Post save signal called")
     user_activate_token = UserActivateTokens.objects.create(
         user=instance, token=str(uuid4()), expired_at=timezone.now() + timedelta(days=1)
     )
-    
+    print(f"Token: {user_activate_token.token}, Expired At: {user_activate_token.expired_at}")
