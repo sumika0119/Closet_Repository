@@ -5,7 +5,9 @@ from django.contrib.auth.models import(
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from uuid import uuid4
-from datetime import datetime, timedelta
+from django.utils import timezone
+from django.utils.timezone import timedelta
+
 from django.urls import reverse_lazy
 from django.contrib import admin
 
@@ -56,7 +58,7 @@ class UserActivateTokensManager(models.Manager):
     def activate_user_by_token(self, token):
         user_activate_token = UserActivateTokens.objects.filter(
             token=token,
-            expired_at__gte=datetime.now()
+            expired_at__gte=timezone.now()
         ).first()
         if user_activate_token:
             user = user_activate_token.user
@@ -83,8 +85,6 @@ class UserActivateTokens(models.Model):
 @receiver(post_save, sender=Users)
 def publish_token(sender, instance, **kwargs):
     user_activate_token = UserActivateTokens.objects.create(
-        user=instance, token=str(uuid4()), expired_at=datetime.now() + timedelta(days=1)
+        user=instance, token=str(uuid4()), expired_at=timezone.now() + timedelta(days=1)
     )
-    
-    print(f'http://127.0.0.1:8000/accounts/activate_user/{user_activate_token.token}')
     
