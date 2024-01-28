@@ -6,11 +6,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.contrib.auth.views import LoginView
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import UserManager
+from django.contrib.auth import password_validation
 
 User = get_user_model()
 
@@ -20,19 +21,15 @@ def home(request):
     )
     
 def regist(request):
-    user_manager = UserManager()
     regist_form = forms.RegistForm(request.POST or None)
     if regist_form.is_valid():
         try:
-            user = regist_form.save()
-            # データベースへの保存が成功したことを確認するために print 文を追加
-            print(f"User {user.email} successfully registered.")
-            print("Redirecting to home...")
+            user = regist_form.save(commit=False)
+            user.is_active = True  # アカウントを有効にする
+            user.save()
             return redirect('accounts:home')
         except ValidationError as e:
-            import pdb; pdb.set_trace()
-            # regist_form.add_error('password', e) 
-            print(f"Exception during registration: {e}") 
+            regist_form.add_error('password', e) 
     return render(
         request, 'accounts/regist.html', context={
             'regist_form': regist_form,
@@ -58,7 +55,7 @@ def user_login(request):
         if user:
             if user.is_active:
                 login(request, user)
-                if user.is_staff:  # ユーザーがスタッフ（管理者）である場合
+                if user.is_staff:  
                     return redirect('admin:index')
                 else:
                     return redirect('accounts:home')
