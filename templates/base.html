@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>my closet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+      integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8="
+      crossorigin="anonymous"></script>
+    {% comment %} <meta name="viewport" content="width=device-width, initial-scale=1.0"> {% endcomment %}
+  </head>
+  <style>
+  .navbar-nav .nav-link,
+  .navbar-brand {
+    font-size: 18px; /* 任意のフォントサイズ */
+  }
+</style>
+
+<body class="home-page">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto mr-3">
+      <a class="nav-link" href="{% url 'accounts:home' %}">HOME</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'boards:create_clothe' %}">服登録</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'boards:list_clothe' %}">服一覧</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:user_logout' %}">ログアウト</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:user_edit' %}">ユーザ更新情報</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:user_login' %}">ログイン</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:regist' %}">ユーザ登録</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+  {% block content %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block content %}
+{% if messages %}
+  {% for message in messages %}
+  <div>{{ message.message }}</div>
+  {% endfor %}
+{% endif %}
+<p class="custom-paragraph">服一覧画面</p>   
+<div class="row justify-content-center">
+  <div class="col-md-8">
+  {% comment %} <!-- 商品名検索フォーム -->
+  <form id="searchForm" method="GET" class="text-center mb-3 form-element">
+    <input type="text" name="search_title" id="search_title" placeholder="商品名検索">
+    <button type="submit" class="btn custom-btn"><i class="fas fa-search"></i></button>
+  </form>
+
+  <!-- 店名検索フォーム -->
+  <form id="searchStoreForm" method="GET" class="text-center mb-3 form-element">
+    <input type="text" name="search_store" id="search_store" placeholder="店名検索">
+    <button type="submit" class="btn custom-btn"><i class="fas fa-search"></i></button>
+  </form> {% endcomment %}
+  <form id="searchForm" method="GET" class="text-center mb-3 form-element">
+    <input type="text" name="search" id="search" placeholder=" 商品名か店名で検索 ">
+    <button type="submit" class="btn custom-btn"><i class="fas fa-search"></i></button>
+  </form>
+
+  <style>
+  #sortForm {
+    margin-right: 100px;
+  }
+  </style>
+  <form id="sortForm" method="GET" class="text-center mb-3 form-element">
+    <select name="sort" id="sort" onchange="submitSortForm()">
+      <option value="">並び替え</option>
+      <option value="price_low">価格が安い順</option>
+      <option value="price_high">価格が高い順</option>
+      <option vsualue="date_new">購入日が新しい順</option>
+      <option value="date_old">購入日が古い順</option>
+    </select>
+  </form>  
+  <form id="filterForm" method="GET" class="text-center mb-3 form-element">
+    <select name="color" id="color">
+        <option value="">全ての色</option>
+        {% for c in color %}
+            <option value="{{ c.color_name }}" {% if c.color_name == selected_color %}selected{% endif %}>{{ c.color_name }}</option>
+        {% endfor %}
+    </select>    
+    <select name="category" id="category" >
+        <option value="">全てのカテゴリー</option>
+        {% for cat in category %}
+            <option value="{{ cat.category_name }}" {% if cat.category_name == selected_category %}selected{% endif %}>{{ cat.category_name }}</option>
+        {% endfor %}
+      <input type="submit" value="絞り込み" class="btn custom-btn">
+    </select>
+  </form>
+  </div>
+</div>
+   <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th></th>
+        <th>商品名</th>
+        <th>写真</th>
+        <th>価格</th>
+        <th>購入日</th>
+        <th>カテゴリー</th>
+        <th>カラー</th>
+        <th>店名</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for clothe in clothe %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td><a href="{% url 'boards:detail_clothe' pk=clothe.pk %}">{{ clothe.title }}</a></td>
+        <td>
+          {% if clothe.picture %}
+          <img src="{{ clothe.picture.url }}" alt="{{ clothe.title }}" width="100">
+          {% endif %}
+        </td>
+        <td>{{ "￥"|default_if_none:"" }}{{ clothe.price|default_if_none:"" }}</td>
+        <td>{{ clothe.purchase_date|date:"Y年m月d日"|default_if_none:"" }}</td>
+        <td>{{ clothe.category.category_name }}</td>
+        <td>
+          {% for color in clothe.color.all %}
+            {{ color.color_name }}
+            {% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </td>
+        <td>{{ clothe.store }}</td>
+      </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // ページ読み込み時に選択されたオプションがあれば選択状態にする
+    var selectedOption = document.getElementById("sort").value;
+    if (selectedOption) {
+      document.getElementById("sort").value = selectedOption;
+    }
+  });
+
+  function submitSortForm() {
+    var selectedOption = document.getElementById("sort").value;
+    if (selectedOption) {
+     
+      document.getElementById("sortForm").submit();
+    }
+   
+    return false;
+  }
+</script>
+{% endblock %}

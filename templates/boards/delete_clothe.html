@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3>削除確認</h3>
+    <p>本当にこの服を削除しますか？</p>
+    <p>タイトル: {{ clothe.title }}</p>
+    {% if clothe.picture %}
+        <p>画像: <img src="{{ clothe.picture.url }}" alt="{{ clothe.title }}" width="100"></p>
+    {% else %}
+        <p>画像: </p>
+    {% endif %}
+    <p>価格: {{ clothe.price|default_if_none:"" }}</p>
+    <p>購入日: {{ clothe.purchase_date|date:"Y年m月d日"|default_if_none:"" }}</p>
+    <p>カテゴリー: {{ clothe.category }}</p>
+    <p>カラー:
+        {% for color in clothe.color.all %}
+            {{ color.color_name }}
+            {% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>   
+    <p>購入したお店: {{ clothe.store }}</p>
+    <form id="delete-form" method="POST" action="{% url 'boards:delete_clothe' pk=clothe.pk %}">
+      {% csrf_token %}
+      
+      <a href="{% url 'boards:detail_clothe' pk=clothe.pk %}">キャンセル</a>
+     
+      <input id="delete-button" type="submit" value="はい、削除します">
+    </form>
+    <script>
+      document.getElementById("delete-form").addEventListener("submit", function(event) {
+      event.preventDefault();
+      this.submit();  
+      });
+    </script>
+{% endblock %}
