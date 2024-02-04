@@ -1,0 +1,207 @@
+.registration-container {
+  max-width: 600px;
+  margin: auto;
+}
+  
+.registration-form {
+  width: 100%;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.image-custom{
+  width: 600px; 
+  height: 300%; 
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px; /* 上側にマージンを追加（必要に応じて調整） */
+}
+
+.button-container button {
+  padding: 10px 20px;
+  font-size: 20px;
+}
+
+.btn-primary {
+  background-color: #4caf50;
+  color: #ffffff;
+  border: 2px solid #4caf50; /* ボーダーの太さと色を変更 */
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #45a049;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+  
+  .detail-container p {
+    font-size: 25px; 
+    margin-bottom: 20px;
+  }
+
+  /* 価格、購入日、カテゴリー、カラー、購入したお店の文字サイズを大きくする */
+  .detail-container p.title {
+    font-size: 29px; 
+    margin-left: 100px; 
+  }
+
+  .detail-container p.price {
+    font-size: 25px; 
+    margin-left: 100px; 
+  }
+
+  .detail-container p.date {
+    font-size: 25px; 
+    margin-left: 100px; 
+  }
+
+  .detail-container p.store {
+    font-size: 25px; 
+    margin-left: 100px; 
+  }
+
+
+  body {
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .detail-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .detail-left,
+  .detail-right {
+    width: 45%; /* または適切な幅に調整 */
+  }
+  
+
+  .custom-paragraph {
+    font-family: 'Arial', sans-serif; /* フォントの種類 */
+    font-size: 30px; /* フォントのサイズ */
+    background-color: #ffe6e6; /* 薄いピンク色 */
+    text-align: center;
+    padding: 20px; /* 上下左右に余白を追加 */
+    line-height: 1.5; 
+  }
+  
+  .image-container {
+    display: flex;
+    justify-content: center;
+    /* max-width: 200px; 
+    max-height: 200px;  */
+    overflow: hidden;
+
+  } 
+
+  .clothe-image {
+    width: 100%;
+    height: auto;
+    max-width: 500px;
+    display: block;
+}
+
+.custom-image {
+  width: 700px; 
+  height: 400%; 
+}
+
+
+  .custom-btn {
+    background-color: #ffe6e6;
+    border: 1px solid #ffe6e6;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.custom-btn:hover {
+    background-color: #e4aaaa;
+} 
+
+#search {
+  width: 200px; /* 適切な幅に調整してください */
+  box-sizing: border-box;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px; 
+}
+
+/* カテゴリーのセレクトボックス */
+#category, #color {
+  width: 200px; /* 適切な幅に調整してください */
+  box-sizing: border-box;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px; /* 適切なマージンに調整してください */
+}
+
+#sort {
+  width: 200px; /* 適切な幅に調整してください */
+  box-sizing: border-box;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px; 
+  margin-left: 50px;
+  
+}
+
+.detail-info {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.info-row {
+  display: flex;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.info-label {
+  flex: 1; /* ラベルが均等に横幅を占める */
+  font-weight: bold; /* ラベルを太字にする（必要に応じて） */
+}
+
+.info-value {
+  flex: 2;
+  font-size: 25px; /* お好みのサイズに変更してください */
+}
+
+.detail-left {
+  text-align: center;
+}
+
